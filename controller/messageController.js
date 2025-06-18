@@ -33,7 +33,7 @@ router.post('/new-message' , authMiddleware , async(req, res)=>{
         })
     }
 })
-
+ 
 router.get('/get-messages/:chatId', authMiddleware, async (req, res) => {
     try {
         const chatId = req.params.chatId;
