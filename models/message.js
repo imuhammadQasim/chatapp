@@ -18,7 +18,7 @@ const messageSchema = new mongoose.Schema({
         type: String // URL or path to the attachment
     }],
     read: [{
-        type: boolean,
+        type: Boolean,
         default: false,
     }]
 }, {timestamps: true});
