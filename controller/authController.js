@@ -2,12 +2,15 @@ const router = require('express').Router();
 const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-router.post('/sign-up', async (req, res) => {
+router.post('/signup', async (req, res) => {
     try {
         const user = await User.findOne({ email: req.body.email })
 
         if (user) {
-            return res.status(400).json({ message: 'User already exists' });
+            return res.status(400).json({
+                message: 'User already exists' ,
+                status: 'failed'
+            });
         }
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
         req.body.password = hashedPassword;
@@ -30,7 +33,6 @@ router.post('/sign-up', async (req, res) => {
                 message: 'Internal Server Error',
                 error: error.message
             });
-
     }
 })
 
@@ -41,7 +43,7 @@ router.post('/login', async (req, res) => {
             return res.status(400).json({ message: 'Invalid email' });
         }
         // To check the password is comming with the user or not???
-        // console.log(user); 
+        console.log(user); 
         const isPasswordValid = await bcrypt.compare(req.body.password, user.password);
 
         if (!isPasswordValid) {
