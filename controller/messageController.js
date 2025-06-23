@@ -8,6 +8,7 @@ router.post('/new-message' , authMiddleware , async(req, res)=>{
     try {
         const newMessage = new Message(req.body);
         const savedMessage = await newMessage.save();
+        console.log("New message payload:", req.body);
 
         // const currentChat = await Chat.findById(req.body.chatId)
         // currentChat.lastMessage = savedMessage._id;
@@ -21,7 +22,7 @@ router.post('/new-message' , authMiddleware , async(req, res)=>{
 
         res.status(201).send({
             message: 'Message sent successfully',
-            status: "success",
+            success: true,
             chat: currentChat,
             data: savedMessage,
         });
@@ -29,7 +30,7 @@ router.post('/new-message' , authMiddleware , async(req, res)=>{
         res.status(500).send({
             message: 'Internal Error in the message controller',
             error: error.message,
-            status: "fail"
+            success: false
         })
     }
 })

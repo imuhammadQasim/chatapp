@@ -17,6 +17,7 @@ router.post('/create-chat', authMiddleware, async (req, res) => {
         
         res.status(201).json({
             message: 'Chat created successfully',
+            success: true,
             data: savedChat
         });
         
@@ -24,6 +25,7 @@ router.post('/create-chat', authMiddleware, async (req, res) => {
         console.error('Error creating chat:', error);
         res.status(500).json({
             message: 'Internal Server Error',
+            success: false,
             error: error.message
         });
     }
@@ -31,7 +33,7 @@ router.post('/create-chat', authMiddleware, async (req, res) => {
 
 router.get('/get-all-chat', authMiddleware, async (req, res) => {
     try {
-        const allChats = await Chat.find({members: {$in : req.userData.userId}});        
+        const allChats = await Chat.find({members: {$in : req.userData.userId}}).populate('members').sort({updatedAt: -1});        
         res.status(200).json({
             message: 'All Chats fetched successfully',
             success: true,
@@ -42,6 +44,7 @@ router.get('/get-all-chat', authMiddleware, async (req, res) => {
         console.error('Error creating chat:', error);
         res.status(500).json({
             message: 'Internal Server Error',
+            success: false,
             error: error.message
         });
     }

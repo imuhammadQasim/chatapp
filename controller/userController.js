@@ -8,12 +8,14 @@
             console.log('User:', user);
             res.status(200).json({
                 message: "User Logged Detail",
-                data: user
+                success: true,
+                data: user,
             })
         } catch (error) {
             res.status(500).json(
                 {
                     message: 'Internal Server Error',
+                    sucess: false,
                     error: error.message
                 });
         }
@@ -26,12 +28,14 @@
             // console.log('User:', allUser);
             res.status(200).json({
                 message: "All User Successfully",
+                success: true,
                 data: allUser
             })
         } catch (error) {
             res.status(500).json(
                 {
                     message: 'Internal Server Error',
+                    success: false,
                     error: error.message
                 });
         }
