@@ -44,7 +44,7 @@ router.post('/login', async (req, res) => {
             return res.status(400).json({ message: 'Invalid email', success: false, });
         }
         // To check the password is comming with the user or not???
-        console.log(user); 
+        // console.log(user); 
         const isPasswordValid = await bcrypt.compare(req.body.password, user.password);
 
         if (!isPasswordValid) {

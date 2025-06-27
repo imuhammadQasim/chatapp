@@ -2,7 +2,7 @@ const Chat = require('../models/chat');
 const User = require('../models/user');
 const router= require('express').Router();
 const authMiddleware = require('../middleware/authMiddleware');
-
+const Message = require('../models/message')
 router.post('/create-chat', authMiddleware, async (req, res) => {
     try {
         const { members} = req.body;
@@ -14,7 +14,7 @@ router.post('/create-chat', authMiddleware, async (req, res) => {
         console.log('Creating chat with members:', members);
         const chat = new Chat(req.body);
         const savedChat = await chat.save();
-        
+        await savedChat.populate('members');
         res.status(201).json({
             message: 'Chat created successfully',
             success: true,
@@ -33,7 +33,8 @@ router.post('/create-chat', authMiddleware, async (req, res) => {
 
 router.get('/get-all-chat', authMiddleware, async (req, res) => {
     try {
-        const allChats = await Chat.find({members: {$in : req.userData.userId}}).populate('members').sort({updatedAt: -1});        
+        const allChats = await Chat.find({members: {$in : req.userData.userId}})
+        .populate('members').populate('lastMessage').sort({updatedAt: -1});        
         res.status(200).json({
             message: 'All Chats fetched successfully',
             success: true,
@@ -49,5 +50,43 @@ router.get('/get-all-chat', authMiddleware, async (req, res) => {
         });
     }
 })
+
+
+router.post('/clear-unread-message', authMiddleware, async (req, res) => {
+    try {
+        const { chatId } = req.body;
+
+        const chat = await Chat.findById(chatId);
+        if (!chat) {
+            return res.status(404).send({
+                message: "No chat found with the given ID",
+                success: false
+            });
+        }
+
+        const updatedChat = await Chat.findByIdAndUpdate(
+            chatId,
+            { unreadMessageCount: 0 },
+            { new: true }
+        ).populate('members').populate('lastMessage');
+
+        await Message.updateMany(
+            { chatId: chatId, read: false },
+            { read: true }
+        );
+
+        res.send({
+            message: 'Unread messages cleared successfully',
+            success: true,
+            data: updatedChat
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: 'Internal Server Error',
+            success: false,
+            error: error.message
+        });
+    }
+});
 
 module.exports = router;

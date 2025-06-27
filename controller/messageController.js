@@ -44,14 +44,14 @@ router.get('/get-messages/:chatId', authMiddleware, async (req, res) => {
 
         res.status(200).send({
             message: 'Messages retrieved successfully',
-            status: "success",
+            success: true,
             data: messages,
         });
     } catch (error) {
         res.status(500).send({
             message: 'Internal Error in the message controller',
             error: error.message,
-            status: "fail"
+            success: false,
         });
     }
 });

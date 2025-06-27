@@ -5,7 +5,7 @@
     router.get('/get-logged-user' , authMiddleware, async(req,res)=>{
         try {
             const user = await User.findOne({_id: req.userData.userId})
-            console.log('User:', user);
+            // console.log('User:', user);
             res.status(200).json({
                 message: "User Logged Detail",
                 success: true,
